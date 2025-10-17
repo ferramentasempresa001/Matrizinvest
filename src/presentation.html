@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Matriz Invest - Plataforma Institucional de Investimentos</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0F1419;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    
+    #app-container {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: auto;
+    }
+    
+    /* Remove any default browser chrome */
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+    
+    /* Prevent text selection during presentation */
+    body {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Allow text selection in input fields */
+    input, textarea {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+    
+    /* Fullscreen styles */
+    body.fullscreen {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Loading screen */
+    #loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0F1419;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease-out;
+    }
+    
+    #loading-screen.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      border: 3px solid #1A3A5C;
+      border-top-color: #2D7A75;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    .loading-text {
+      color: #E8EBF0;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Presentation mode indicator (optional, can be removed) */
+    .presentation-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(26, 58, 92, 0.9);
+      color: #E8EBF0;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      z-index: 10000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .presentation-badge.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="dark">
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loading-logo"></div>
+    <div class="loading-text">Matriz Invest</div>
+  </div>
+  
+  <!-- Main App Container -->
+  <div id="app-container"></div>
+  
+  <!-- Optional Presentation Badge -->
+  <div class="presentation-badge" id="presentation-badge">
+    Modo Apresentação
+  </div>
+
+  <script type="module">
+    // Hide loading screen when app is ready
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').classList.add('hide');
+      }, 1000);
+    });
+    
+    // Fullscreen controls (F11 or double-click)
+    let clickTimer = null;
+    document.addEventListener('dblclick', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.log('Fullscreen request failed:', err);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    });
+    
+    // Show presentation badge on fullscreen
+    document.addEventListener('fullscreenchange', () => {
+      const badge = document.getElementById('presentation-badge');
+      if (document.fullscreenElement) {
+        badge.classList.add('show');
+        setTimeout(() => {
+          badge.classList.remove('show');
+        }, 2000);
+      }
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // F11 for fullscreen (browser default)
+      // ESC to exit fullscreen (browser default)
+      
+      // Optional: Add custom shortcuts
+      if (e.key === 'p' && e.ctrlKey) {
+        e.preventDefault();
+        window.print();
+      }
+    });
+    
+    // Prevent context menu in presentation mode
+    document.addEventListener('contextmenu', (e) => {
+      if (document.fullscreenElement) {
+        e.preventDefault();
+      }
+    });
+    
+    // Optimize for mobile presentation
+    if ('standalone' in window.navigator && window.navigator.standalone) {
+      document.body.classList.add('fullscreen');
+    }
+    
+    // Service worker for offline capability (optional)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Uncomment to enable offline mode
+        // navigator.serviceWorker.register('/sw.js');
+      });
+    }
+  </script>
+</body>
+</html>
