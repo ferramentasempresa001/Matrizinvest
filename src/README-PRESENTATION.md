@@ -1,8 +1,8 @@
-# 🎯 Matriz Invest - Modo Apresentação Institucional
+# 🎯 Prisma Finance - Modo Apresentação Institucional
 
 ## 📋 Visão Geral
 
-Este documento descreve como utilizar o **Matriz Invest** em modo de apresentação fullscreen para demonstrações institucionais, reuniões com stakeholders e fins educacionais.
+Este documento descreve como utilizar o **Prisma Finance** em modo de apresentação fullscreen para demonstrações institucionais, reuniões com stakeholders e fins educacionais.
 
 ---
 
@@ -219,7 +219,7 @@ Comente o event listener em `presentation.html`:
 
 ## 📞 Suporte
 
-Este protótipo foi desenvolvido para demonstrações internas e fins educacionais da **Matriz Invest**.
+Este protótipo foi desenvolvido para demonstrações internas e fins educacionais da **Prisma Finance**.
 
 **Tecnologias Utilizadas**:
 - React 18

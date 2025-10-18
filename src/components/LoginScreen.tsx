@@ -47,10 +47,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 </svg>
               </div>
               <h1 className="text-[#E8EBF0] text-3xl tracking-[0.3em] mb-1">
-                MATRIZ
+                PRISMA
               </h1>
               <p className="text-[#94A3B8] text-xs tracking-[0.4em]">
-                I N V E S T
+                F I N A N C E
               </p>
             </div>
           </motion.div>
@@ -126,7 +126,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           className="mt-6 flex items-center justify-center gap-2 text-[#64748B] text-xs"
         >
           <Shield className="w-4 h-4" />
-          <span>Matriz Invest: Excelência em gestão de investimentos</span>
+          <span>Prisma Finance: Excelência em gestão de investimentos</span>
         </motion.div>
       </motion.div>
     </div>

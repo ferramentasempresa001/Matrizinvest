@@ -1,4 +1,4 @@
-# 🚀 Guia de Deploy - Matriz Invest (Modo Apresentação)
+# 🚀 Guia de Deploy - Prisma Finance (Modo Apresentação)
 
 ## 📌 Importante: Esclarecimento sobre a Arquitetura
 
@@ -75,7 +75,7 @@ netlify deploy --prod --dir=dist
 ##### GitHub Pages
 ```bash
 # 1. Adicionar ao package.json
-"homepage": "https://seu-usuario.github.io/matriz-invest"
+"homepage": "https://seu-usuario.github.io/prisma-finance"
 
 # 2. Install gh-pages
 npm install --save-dev gh-pages
@@ -96,17 +96,17 @@ Após deploy, você terá uma URL como:
 
 ### Vercel
 ```
-https://matriz-invest.vercel.app
+https://prisma-finance.vercel.app
 ```
 
 ### Netlify
 ```
-https://matriz-invest.netlify.app
+https://prisma-finance.netlify.app
 ```
 
 ### GitHub Pages
 ```
-https://seu-usuario.github.io/matriz-invest
+https://seu-usuario.github.io/prisma-finance
 ```
 
 ---
@@ -140,7 +140,7 @@ Se você quiser incorporar o app em um site corporativo:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Matriz Invest - Demo Institucional</title>
+  <title>Prisma Finance - Demo Institucional</title>
   <style>
     body, html {
       margin: 0;
@@ -159,9 +159,9 @@ Se você quiser incorporar o app em um site corporativo:
 <body>
   <!-- Incorpore a URL do seu deploy aqui -->
   <iframe 
-    src="https://matriz-invest.vercel.app" 
+    src="https://prisma-finance.vercel.app" 
     allowfullscreen
-    title="Matriz Invest - Plataforma de Investimentos"
+    title="Prisma Finance - Plataforma de Investimentos"
   ></iframe>
 </body>
 </html>
@@ -260,7 +260,7 @@ npm install qrcode
 // Gerar QR Code programaticamente
 import QRCode from 'qrcode';
 
-QRCode.toDataURL('https://matriz-invest.vercel.app')
+QRCode.toDataURL('https://prisma-finance.vercel.app')
   .then(url => console.log(url))
   .catch(err => console.error(err));
 ```
@@ -272,7 +272,7 @@ QRCode.toDataURL('https://matriz-invest.vercel.app')
 ### Adicionar Logo Institucional
 Edite `LoginScreen.tsx` ou `DashboardScreen.tsx`:
 ```tsx
-<img src="/logo-corporativo.svg" alt="Matriz Invest" className="w-32 h-32" />
+<img src="/logo-corporativo.svg" alt="Prisma Finance" className="w-32 h-32" />
 ```
 
 ### Customizar Cores

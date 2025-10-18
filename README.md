@@ -1,7 +1,7 @@
 
-  # Matriz Invest
+  # Prisma Finance
 
-  This is a code bundle for Matriz Invest. The original project is available at https://www.figma.com/design/fr7Hp03SrVCeCtEgj62m2y/Matriz-Invest.
+  This is a code bundle for Prisma Finance. The original project is available at https://www.figma.com/design/fr7Hp03SrVCeCtEgj62m2y/Prisma-Finance.
 
   ## Running the code
 

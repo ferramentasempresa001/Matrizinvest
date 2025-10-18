@@ -31,8 +31,8 @@ export function ProfileScreen() {
               <User className="w-8 h-8 text-[#2D7A75]" />
             </div>
             <div className="flex-1">
-              <h3 className="text-[#E8EBF0] mb-1">Usuário Investidor</h3>
-              <p className="text-[#64748B] text-sm">usuario@email.com</p>
+              <h3 className="text-[#E8EBF0] mb-1">Carlos Silva</h3>
+              <p className="text-[#64748B] text-sm">carlos.silva@prismafinance.com</p>
             </div>
             <Button size="sm" variant="outline" className="bg-[#252B3A] hover:bg-[#2A3F5F] text-[#E8EBF0] border-[#2A3F5F]">
               Editar
@@ -135,7 +135,7 @@ export function ProfileScreen() {
 
         {/* Informações Legais */}
         <div className="text-center space-y-2 text-xs text-[#64748B]">
-          <p>Matriz Invest © 2025. Todos os direitos reservados.</p>
+          <p>Prisma Finance © 2025. Todos os direitos reservados.</p>
           <div className="flex justify-center gap-4">
             <span className="hover:text-[#2D7A75] cursor-pointer">Termos de Uso</span>
             <span className="hover:text-[#2D7A75] cursor-pointer">Privacidade</span>
