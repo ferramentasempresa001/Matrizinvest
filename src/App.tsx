@@ -12,11 +12,36 @@ import { Toaster } from './components/ui/sonner';
 
 type Screen = 'login' | 'dashboard' | 'goals' | 'habits' | 'achievements' | 'finance' | 'reports' | 'profile';
 
+export interface Investment {
+  id: number;
+  type: string;
+  name: string;
+  amount: number;
+  return: number;
+}
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  
+  // Profile data state
+  const [userEmail, setUserEmail] = useState('');
+  
+  // Financial data state
+  const [totalBalance, setTotalBalance] = useState(59950.00);
+  const [investments, setInvestments] = useState<Investment[]>([
+    { id: 1, type: 'Renda Fixa', name: 'CDB Banco XYZ', amount: 4500, return: 8.5 },
+    { id: 2, type: 'Ações', name: 'Portfolio Diversificado', amount: 6600, return: 15.2 },
+    { id: 3, type: 'Cripto', name: 'Bitcoin & Ethereum', amount: 2550, return: 22.8 },
+    { id: 4, type: 'Fundos', name: 'Fundo Multimercado', amount: 1350, return: 6.3 },
+  ]);
 
-  const handleLogin = () => {
+  const handleLogin = (name: string) => {
+    setUserName(name);
+    // Auto-generate email from username
+    const email = name.toLowerCase().replace(/\s+/g, '.') + '@prismafinance.com';
+    setUserEmail(email);
     setIsLoggedIn(true);
     setCurrentScreen('dashboard');
   };
@@ -28,7 +53,16 @@ export default function App() {
 
     switch (currentScreen) {
       case 'dashboard':
-        return <DashboardScreen />;
+        return (
+          <DashboardScreen 
+            userName={userName}
+            totalBalance={totalBalance}
+            setTotalBalance={setTotalBalance}
+            investments={investments}
+            setInvestments={setInvestments}
+            onNavigate={setCurrentScreen}
+          />
+        );
       case 'goals':
         return <GoalsScreen />;
       case 'habits':
@@ -40,9 +74,25 @@ export default function App() {
       case 'reports':
         return <ReportsScreen />;
       case 'profile':
-        return <ProfileScreen />;
+        return (
+          <ProfileScreen 
+            userName={userName}
+            setUserName={setUserName}
+            userEmail={userEmail}
+            setUserEmail={setUserEmail}
+          />
+        );
       default:
-        return <DashboardScreen />;
+        return (
+          <DashboardScreen 
+            userName={userName}
+            totalBalance={totalBalance}
+            setTotalBalance={setTotalBalance}
+            investments={investments}
+            setInvestments={setInvestments}
+            onNavigate={setCurrentScreen}
+          />
+        );
     }
   };
 

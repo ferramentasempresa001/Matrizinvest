@@ -1,7 +1,12 @@
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Checkbox } from './ui/checkbox';
-import { CheckCircle2, TrendingUp, Star, FileText, Newspaper, BarChart3, BookOpen } from 'lucide-react';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Textarea } from './ui/textarea';
+import { CheckCircle2, TrendingUp, Star, FileText, Newspaper, BarChart3, BookOpen, Plus, Target, Briefcase, Coffee, Lightbulb, Activity } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { toast } from 'sonner@2.0.3';
@@ -23,8 +28,28 @@ const initialHabits: Habit[] = [
   { id: 5, title: 'Participar de Webinar sobre Investimentos', description: 'Educação continuada em finanças', completed: false, icon: BookOpen, points: 80 },
 ];
 
+const availableIcons = [
+  { name: 'Newspaper', icon: Newspaper },
+  { name: 'TrendingUp', icon: TrendingUp },
+  { name: 'FileText', icon: FileText },
+  { name: 'BarChart3', icon: BarChart3 },
+  { name: 'BookOpen', icon: BookOpen },
+  { name: 'Target', icon: Target },
+  { name: 'Briefcase', icon: Briefcase },
+  { name: 'Coffee', icon: Coffee },
+  { name: 'Lightbulb', icon: Lightbulb },
+  { name: 'Activity', icon: Activity },
+];
+
 export function HabitsScreen() {
   const [habits, setHabits] = useState<Habit[]>(initialHabits);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newHabit, setNewHabit] = useState({
+    title: '',
+    description: '',
+    points: 50,
+    iconIndex: 0,
+  });
 
   const handleToggle = (id: number) => {
     setHabits(prev => prev.map(habit => {
@@ -39,6 +64,29 @@ export function HabitsScreen() {
       }
       return habit;
     }));
+  };
+
+  const handleAddHabit = () => {
+    if (!newHabit.title.trim()) {
+      toast.error('Erro', { description: 'Por favor, insira um título para o hábito' });
+      return;
+    }
+
+    const habit: Habit = {
+      id: habits.length > 0 ? Math.max(...habits.map(h => h.id)) + 1 : 1,
+      title: newHabit.title,
+      description: newHabit.description,
+      completed: false,
+      icon: availableIcons[newHabit.iconIndex].icon,
+      points: newHabit.points,
+    };
+
+    setHabits([...habits, habit]);
+    setNewHabit({ title: '', description: '', points: 50, iconIndex: 0 });
+    setDialogOpen(false);
+    toast.success('Hábito Adicionado', {
+      description: 'Nova rotina criada com sucesso'
+    });
   };
 
   const completedToday = habits.filter(h => h.completed).length;
@@ -101,7 +149,98 @@ export function HabitsScreen() {
 
         {/* Lista de Hábitos */}
         <div className="space-y-3">
-          <h3 className="text-[#E8EBF0] text-sm">Rotina do Dia</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-[#E8EBF0] text-sm">Rotina do Dia</h3>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  size="sm"
+                  className="bg-[#2D7A75] hover:bg-[#45A598] text-[#E8EBF0] h-8 w-8 p-0"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-[#1A1F2E] border-[#2A3F5F] text-[#E8EBF0] max-w-[400px]">
+                <DialogHeader>
+                  <DialogTitle className="text-[#E8EBF0]">Adicionar Nova Rotina</DialogTitle>
+                  <DialogDescription className="text-[#94A3B8]">
+                    Crie um novo hábito para sua rotina diária de desenvolvimento financeiro
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-[#E8EBF0] text-sm">Título</Label>
+                    <Input
+                      id="title"
+                      placeholder="Ex: Revisar portfólio"
+                      value={newHabit.title}
+                      onChange={(e) => setNewHabit({ ...newHabit, title: e.target.value })}
+                      className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0] placeholder:text-[#64748B]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-[#E8EBF0] text-sm">Descrição</Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Descreva a atividade..."
+                      value={newHabit.description}
+                      onChange={(e) => setNewHabit({ ...newHabit, description: e.target.value })}
+                      className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0] placeholder:text-[#64748B] min-h-[80px]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[#E8EBF0] text-sm">Ícone</Label>
+                    <div className="grid grid-cols-5 gap-2">
+                      {availableIcons.map((item, idx) => {
+                        const Icon = item.icon;
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => setNewHabit({ ...newHabit, iconIndex: idx })}
+                            className={`h-10 rounded-lg flex items-center justify-center transition-colors ${
+                              newHabit.iconIndex === idx
+                                ? 'bg-[#2D7A75] text-[#E8EBF0]'
+                                : 'bg-[#252B3A] text-[#64748B] hover:bg-[#2A3F5F]'
+                            }`}
+                          >
+                            <Icon className="w-5 h-5" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="points" className="text-[#E8EBF0] text-sm">Pontos (XP)</Label>
+                    <Input
+                      id="points"
+                      type="number"
+                      min="10"
+                      max="200"
+                      step="5"
+                      value={newHabit.points}
+                      onChange={(e) => setNewHabit({ ...newHabit, points: parseInt(e.target.value) || 50 })}
+                      className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0]"
+                    />
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialogOpen(false)}
+                      className="flex-1 bg-[#252B3A] hover:bg-[#2A3F5F] text-[#E8EBF0] border-[#2A3F5F] h-10 sm:h-9 text-sm"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleAddHabit}
+                      className="flex-1 bg-[#2D7A75] hover:bg-[#45A598] text-[#E8EBF0] h-10 sm:h-9 text-sm"
+                    >
+                      Adicionar
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
           {habits.map((habit, index) => {
             const Icon = habit.icon;
             return (

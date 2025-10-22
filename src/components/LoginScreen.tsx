@@ -6,17 +6,29 @@ import { motion } from 'motion/react';
 import { Shield, Lock, User } from 'lucide-react';
 
 interface LoginScreenProps {
-  onLogin: () => void;
+  onLogin: (name: string) => void;
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const extractFirstName = (username: string): string => {
+    // Remove email domain if present
+    let name = username.split('@')[0];
+    
+    // Get first part if there's a dot or underscore
+    name = name.split('.')[0].split('_')[0];
+    
+    // Capitalize first letter
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username && password) {
-      onLogin();
+      const firstName = extractFirstName(username);
+      onLogin(firstName);
     }
   };
 
@@ -107,9 +119,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
           <Button
             type="submit"
-            className="w-full bg-[#1A3A5C] hover:bg-[#2D7A75] text-[#E8EBF0] h-12 rounded-md transition-colors"
+            className="w-full bg-[#1A3A5C] hover:bg-[#2D7A75] text-[#E8EBF0] h-11 sm:h-12 rounded-md transition-colors"
           >
-            Acessar Plataforma
+            <span className="text-sm sm:text-base">Acessar Plataforma</span>
           </Button>
 
           <div className="flex justify-between text-sm">

@@ -31,7 +31,7 @@ export function BottomNav({ currentScreen, onNavigate }: BottomNavProps) {
               <button
                 key={item.screen}
                 onClick={() => onNavigate(item.screen)}
-                className="relative flex flex-col items-center gap-1 p-2 min-w-[52px] flex-shrink-0 transition-all"
+                className="relative flex flex-col items-center gap-1 p-2 min-w-[48px] sm:min-w-[60px] flex-shrink-0 transition-all touch-manipulation"
               >
                 {isActive && (
                   <motion.div

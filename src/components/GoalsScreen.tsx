@@ -47,9 +47,9 @@ export function GoalsScreen() {
           </div>
           <Dialog>
             <DialogTrigger asChild>
-              <Button size="sm" className="bg-[#1A3A5C] hover:bg-[#2D7A75] text-[#E8EBF0]">
-                <Plus className="w-4 h-4 mr-1" />
-                Adicionar
+              <Button size="sm" className="bg-[#1A3A5C] hover:bg-[#2D7A75] text-[#E8EBF0] h-8 sm:h-9 px-2 sm:px-3">
+                <Plus className="w-4 h-4 sm:mr-1" />
+                <span className="hidden sm:inline">Adicionar</span>
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-[#1A1F2E] border-[#2A3F5F] text-[#E8EBF0]">
@@ -81,7 +81,7 @@ export function GoalsScreen() {
                     className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0]"
                   />
                 </div>
-                <Button className="w-full bg-[#2D7A75] hover:bg-[#45A598] text-[#E8EBF0]">
+                <Button className="w-full bg-[#2D7A75] hover:bg-[#45A598] text-[#E8EBF0] h-11 sm:h-10 text-sm sm:text-base">
                   Criar Meta
                 </Button>
               </div>

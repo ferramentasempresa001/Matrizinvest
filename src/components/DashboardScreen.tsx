@@ -1,10 +1,14 @@
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { TrendingUp, DollarSign, Eye, EyeOff, Building2, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Input } from './ui/input';
+import { TrendingUp, DollarSign, Eye, EyeOff, Building2, ArrowUpRight, ArrowDownRight, Save, X } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'motion/react';
 import { useState } from 'react';
+import { Investment } from '../App';
+import { SmartAlertsWidget } from './SmartAlertsWidget';
+import { RecommendationsWidget } from './RecommendationsWidget';
 
 const performanceData = [
   { day: '10/10', value: 48200 },
@@ -17,20 +21,74 @@ const performanceData = [
   { day: '17/10', value: 59950 },
 ];
 
-const investments = [
-  { id: 1, type: 'Renda Fixa', name: 'CDB Banco XYZ', amount: 15000, return: 8.5 },
-  { id: 2, type: 'Ações', name: 'Portfolio Diversificado', amount: 22000, return: 15.2 },
-  { id: 3, type: 'Cripto', name: 'Bitcoin & Ethereum', amount: 8500, return: 22.8 },
-  { id: 4, type: 'Fundos', name: 'Fundo Multimercado', amount: 4500, return: 6.3 },
-];
+interface DashboardScreenProps {
+  userName: string;
+  totalBalance: number;
+  setTotalBalance: (value: number) => void;
+  investments: Investment[];
+  setInvestments: (investments: Investment[]) => void;
+  onNavigate?: (screen: 'finance' | 'reports') => void;
+}
 
-export function DashboardScreen() {
+export function DashboardScreen({ 
+  userName, 
+  totalBalance, 
+  setTotalBalance, 
+  investments, 
+  setInvestments,
+  onNavigate
+}: DashboardScreenProps) {
   const [showBalance, setShowBalance] = useState(true);
+  const [isEditMode, setIsEditMode] = useState(false);
   
-  const totalBalance = 59950.00;
+  // Temporary edit values
+  const [editBalance, setEditBalance] = useState(totalBalance);
+  const [editTotalInvested, setEditTotalInvested] = useState(0);
+  const [editInvestments, setEditInvestments] = useState<Investment[]>(investments);
+  
   const totalInvested = investments.reduce((sum, inv) => sum + inv.amount, 0);
   const totalProfit = totalBalance - totalInvested;
   const profitPercentage = ((totalProfit / totalInvested) * 100).toFixed(1);
+
+  // Calculate values for edit mode
+  const editTotalProfit = editBalance - editTotalInvested;
+  const editProfitPercentage = editTotalInvested > 0 
+    ? ((editTotalProfit / editTotalInvested) * 100).toFixed(1)
+    : '0.0';
+
+  // Handle icon click to activate edit mode
+  const handleIconClick = () => {
+    setIsEditMode(true);
+    setEditBalance(totalBalance);
+    setEditTotalInvested(totalInvested);
+    setEditInvestments([...investments]);
+  };
+
+  const handleSave = () => {
+    setTotalBalance(editBalance);
+    setInvestments(editInvestments);
+    setIsEditMode(false);
+  };
+
+  const handleCancel = () => {
+    setEditBalance(totalBalance);
+    setEditInvestments([...investments]);
+    setIsEditMode(false);
+  };
+
+  const updateInvestmentAmount = (id: number, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    setEditInvestments(prev => 
+      prev.map(inv => inv.id === id ? { ...inv, amount: numValue } : inv)
+    );
+  };
+
+  const updateInvestmentReturn = (id: number, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    setEditInvestments(prev => 
+      prev.map(inv => inv.id === id ? { ...inv, return: numValue } : inv)
+    );
+  };
 
   return (
     <div className="min-h-screen pb-24 overflow-auto bg-[#0F1419]">
@@ -38,7 +96,7 @@ export function DashboardScreen() {
       <div className="bg-[#1A1F2E] p-6 sticky top-0 z-10 border-b border-[#2A3F5F]">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[#94A3B8] text-sm">Bem-vindo(a), Usuário</p>
+            <p className="text-[#94A3B8] text-sm">Bem-vindo(a), {userName}</p>
             <h2 className="text-[#E8EBF0]">Acompanhe sua Performance</h2>
           </div>
           <div className="w-10 h-10 bg-[#2A3F5F] rounded-lg flex items-center justify-center">
@@ -48,6 +106,39 @@ export function DashboardScreen() {
       </div>
 
       <div className="p-6 space-y-6">
+        {/* Edit Mode Controls */}
+        {isEditMode && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#2D7A75]/10 border border-[#2D7A75]/30 rounded-lg p-4"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[#E8EBF0]">Modo de Edição Ativo</p>
+                <p className="text-[#94A3B8] text-xs mt-1">Edite os valores financeiros abaixo</p>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleCancel}
+                  variant="outline"
+                  className="bg-[#1A1F2E] hover:bg-[#252B3A] text-[#E8EBF0] border-[#2A3F5F] gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  className="bg-[#2D7A75] hover:bg-[#2D7A75]/80 text-[#E8EBF0] gap-2"
+                >
+                  <Save className="w-4 h-4" />
+                  Salvar
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Patrimônio Consolidado */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -56,8 +147,16 @@ export function DashboardScreen() {
           <Card className="bg-[#1A1F2E] border-[#2A3F5F] p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-[#2D7A75]" />
-                <p className="text-[#94A3B8] text-sm">Patrimônio Consolidado</p>
+                <button
+                  onClick={handleIconClick}
+                  className="text-[#2D7A75] hover:text-[#2D7A75]/80 transition-colors cursor-pointer"
+                  title="Clique para editar valores"
+                >
+                  <DollarSign className="w-5 h-5" />
+                </button>
+                <p className="text-[#94A3B8] text-sm select-none">
+                  Patrimônio Consolidado
+                </p>
               </div>
               <button
                 onClick={() => setShowBalance(!showBalance)}
@@ -66,13 +165,28 @@ export function DashboardScreen() {
                 {showBalance ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
               </button>
             </div>
-            <h3 className="text-[#E8EBF0] text-3xl mb-3">
-              {showBalance ? `R$ ${totalBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'R$ •••••••'}
-            </h3>
+            
+            {isEditMode ? (
+              <div className="mb-3">
+                <label className="text-[#64748B] text-xs mb-1 block">Patrimônio Consolidado (R$)</label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={editBalance}
+                  onChange={(e) => setEditBalance(parseFloat(e.target.value) || 0)}
+                  className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0] text-2xl h-14"
+                />
+              </div>
+            ) : (
+              <h3 className="text-[#E8EBF0] text-3xl mb-3">
+                {showBalance ? `R$ ${totalBalance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'R$ •••••••'}
+              </h3>
+            )}
+            
             <div className="flex items-center gap-2 text-sm">
               <Badge className="bg-[#2D7A75]/20 text-[#2D7A75] border-[#2D7A75]/30">
                 <ArrowUpRight className="w-3 h-3 mr-1" />
-                +{profitPercentage}%
+                +{isEditMode ? editProfitPercentage : profitPercentage}%
               </Badge>
               <span className="text-[#94A3B8]">Performance Mensal</span>
             </div>
@@ -80,11 +194,31 @@ export function DashboardScreen() {
             <div className="grid grid-cols-2 gap-4 mt-5 pt-5 border-t border-[#2A3F5F]">
               <div>
                 <p className="text-[#64748B] text-xs mb-1">Total Investido</p>
-                <p className="text-[#E8EBF0]">R$ {totalInvested.toLocaleString('pt-BR')}</p>
+                {isEditMode ? (
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={editTotalInvested}
+                    onChange={(e) => setEditTotalInvested(parseFloat(e.target.value) || 0)}
+                    className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0]"
+                  />
+                ) : (
+                  <p className="text-[#E8EBF0]">
+                    {showBalance ? `R$ ${totalInvested.toLocaleString('pt-BR')}` : 'R$ •••••••'}
+                  </p>
+                )}
               </div>
               <div>
                 <p className="text-[#64748B] text-xs mb-1">Retorno no Período</p>
-                <p className="text-[#2D7A75]">+R$ {totalProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                {isEditMode ? (
+                  <p className="text-[#2D7A75]">
+                    {editTotalProfit >= 0 ? '+' : ''}R$ {editTotalProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                ) : (
+                  <p className="text-[#2D7A75]">
+                    {showBalance ? `+R$ ${totalProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '+R$ •••••••'}
+                  </p>
+                )}
               </div>
             </div>
           </Card>
@@ -175,54 +309,87 @@ export function DashboardScreen() {
             <p className="text-[#64748B] text-sm">Distribuição por categoria</p>
           </div>
           <div className="space-y-3">
-            {investments.map((investment) => (
+            {(isEditMode ? editInvestments : investments).map((investment) => (
               <Card key={investment.id} className="bg-[#1A1F2E] border-[#2A3F5F] p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                {isEditMode ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
                       <Badge className="bg-[#2A3F5F] text-[#E8EBF0] text-xs">
                         {investment.type}
                       </Badge>
+                      <p className="text-[#E8EBF0] text-sm">{investment.name}</p>
                     </div>
-                    <p className="text-[#E8EBF0] text-sm">{investment.name}</p>
-                    <p className="text-[#64748B] text-xs mt-1">
-                      R$ {investment.amount.toLocaleString('pt-BR')}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className={`flex items-center gap-1 ${investment.return > 0 ? 'text-[#2D7A75]' : 'text-[#EF4444]'}`}>
-                      {investment.return > 0 ? (
-                        <ArrowUpRight className="w-4 h-4" />
-                      ) : (
-                        <ArrowDownRight className="w-4 h-4" />
-                      )}
-                      <span className="text-sm">
-                        {investment.return > 0 ? '+' : ''}{investment.return}%
-                      </span>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[#64748B] text-xs mb-1 block">Valor (R$)</label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={investment.amount}
+                          onChange={(e) => updateInvestmentAmount(investment.id, e.target.value)}
+                          className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[#64748B] text-xs mb-1 block">Retorno (%)</label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={investment.return}
+                          onChange={(e) => updateInvestmentReturn(investment.id, e.target.value)}
+                          className="bg-[#252B3A] border-[#2A3F5F] text-[#E8EBF0]"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge className="bg-[#2A3F5F] text-[#E8EBF0] text-xs">
+                          {investment.type}
+                        </Badge>
+                      </div>
+                      <p className="text-[#E8EBF0] text-sm">{investment.name}</p>
+                      <p className="text-[#64748B] text-xs mt-1">
+                        R$ {investment.amount.toLocaleString('pt-BR')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className={`flex items-center gap-1 ${investment.return > 0 ? 'text-[#2D7A75]' : 'text-[#EF4444]'}`}>
+                        {investment.return > 0 ? (
+                          <ArrowUpRight className="w-4 h-4" />
+                        ) : (
+                          <ArrowDownRight className="w-4 h-4" />
+                        )}
+                        <span className="text-sm">
+                          {investment.return > 0 ? '+' : ''}{investment.return}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </Card>
             ))}
           </div>
         </motion.div>
 
-        {/* Ações Rápidas */}
+        {/* Smart Alerts Widget */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.5 }}
         >
-          <div className="grid grid-cols-2 gap-3">
-            <Button className="h-auto py-4 flex flex-col gap-2 bg-[#1A3A5C] hover:bg-[#2D7A75] text-[#E8EBF0] border-0">
-              <TrendingUp className="w-5 h-5" />
-              <span className="text-sm">Novo Investimento</span>
-            </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col gap-2 bg-[#1A1F2E] hover:bg-[#252B3A] text-[#E8EBF0] border-[#2A3F5F]">
-              <DollarSign className="w-5 h-5" />
-              <span className="text-sm">Relatórios</span>
-            </Button>
-          </div>
+          <SmartAlertsWidget />
+        </motion.div>
+
+        {/* Recommendations Widget */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+        >
+          <RecommendationsWidget />
         </motion.div>
       </div>
     </div>
